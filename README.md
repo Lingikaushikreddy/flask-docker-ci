@@ -57,10 +57,24 @@ docker stop api
 
 ### Pull the published image instead of building
 
+Every push to `main` publishes the image to GitHub Container Registry:
+
 ```bash
 docker pull ghcr.io/lingikaushikreddy/flask-docker-ci:latest
 docker run -d --rm -p 8080:8000 ghcr.io/lingikaushikreddy/flask-docker-ci:latest
 ```
+
+> **Heads up:** GHCR packages are **private by default**, so that pull returns
+> `401 Unauthorized` for anyone else until the package is made public
+> (repo → *Packages* → the package → *Package settings* → *Change visibility*).
+> Publishing an image and assuming the world can pull it is a genuinely common
+> mistake — always test anonymously:
+>
+> ```bash
+> curl -s -o /dev/null -w '%{http_code}\n' \
+>   https://ghcr.io/v2/lingikaushikreddy/flask-docker-ci/manifests/latest
+> # 401 = private, 200 = public
+> ```
 
 ### Without Docker
 
